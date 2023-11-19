@@ -1,0 +1,16 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) [%10thread] %cyan(%-40logger{36}) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--    <logger name="org.hibernate" level="debug"/>-->
+    <!--    <logger name="org.hibernate.resource.jdbc.internal.LogicalConnectionManagedImpl" level="debug"/>-->
+    <!--    <logger name="org.hibernate.resource.jdbc" level="trace"/>-->
+    <logger name="org.hibernate.engine.transaction.internal.TransactionImpl" level="trace"/>
+
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
