@@ -1,11 +1,10 @@
-package org.gbg.tutorials.jpadissected.ch04;
+package org.gbg.tutorials.jpadissected.ch05;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import org.gbg.tutorials.jpadissected.BookingService;
+import org.gbg.tutorials.jpadissected.booking.BookingService;
+import org.gbg.tutorials.jpadissected.booking.DeclarativeTxBookingService;
 import org.gbg.tutorials.jpadissected.domain.Booking;
-import org.gbg.tutorials.jpadissected.domain.Court;
-import org.gbg.tutorials.jpadissected.domain.Player;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,15 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.gbg.tutorials.jpadissected.TestData.FIRST_COURT_ID;
+import static org.gbg.tutorials.jpadissected.TestData.FIRST_PLAYER_ID;
 
 @SpringBootTest
-class BookingCreationTest {
+public class DeclarativeTxBookingServiceTest {
 
     @Autowired
-    private BookingService bookingService;
+    private DeclarativeTxBookingService bookingService;
 
     @Autowired
     private EntityManagerFactory emf;
@@ -39,21 +39,8 @@ class BookingCreationTest {
 
     @Test
     void shouldCreateNewBooking() {
-        //  given
-        var court = new Court(UUID.randomUUID(), "court-name");
-        var player = new Player(UUID.randomUUID(), "foo@invalid.com");
-
-        var tx = em.getTransaction();
-        tx.begin();
-        em.persist(court);
-        em.persist(player);
-        tx.commit();
-
         //  when
-        bookingService.bookWithReference(new BookingService.Request(
-                court.getId(),
-                player.getId(),
-                LocalDateTime.now()));
+        bookingService.book(new BookingService.Request(FIRST_COURT_ID, FIRST_PLAYER_ID, LocalDateTime.now()));
 
         //  then
         var bookings = em.createQuery("select b from Booking b", Booking.class).getResultList();

@@ -28,7 +28,6 @@ public class FlushesTest {
             tx.begin();
 
             courts.forEach(em::persist);
-            courts.forEach(it -> it.setName("new-name"));
 
             veryExpensiveOperation();
 
@@ -51,7 +50,6 @@ public class FlushesTest {
 
             Lists.partition(courts, 20).forEach(chunk -> {
                 chunk.forEach(em::persist);
-                courts.forEach(it -> it.setName("new-name"));
                 em.flush();
                 //  chunk.forEach(em::detach);  //  without detach entity is still kept in 1st level cache
             });
@@ -79,7 +77,6 @@ public class FlushesTest {
             tx.begin();
 
             courts.forEach(em::persist);
-            courts.forEach(it -> it.setName("new-name"));
 
             //  this line forces flush
             var count = em.createQuery("select count(*) from Court c", Long.class).getSingleResult();

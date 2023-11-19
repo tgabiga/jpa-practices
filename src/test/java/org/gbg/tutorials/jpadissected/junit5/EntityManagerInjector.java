@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManagerFactory;
 import org.gbg.tutorials.jpadissected.LoggingSessionListener;
 import org.gbg.tutorials.jpadissected.domain.Booking;
 import org.gbg.tutorials.jpadissected.domain.Court;
+import org.gbg.tutorials.jpadissected.domain.Player;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -37,12 +38,13 @@ public class EntityManagerInjector implements ParameterResolver, BeforeAllCallba
     @Override
     public void beforeAll(ExtensionContext extensionContext) {
         serviceRegistry = new StandardServiceRegistryBuilder()
+                .loadProperties("hibernate-vanilla.properties")
                 .applySetting(AvailableSettings.AUTO_SESSION_EVENTS_LISTENER, LoggingSessionListener.class.getName())
                 //                .applySetting(AvailableSettings.LOG_SESSION_METRICS, true)
                 .build();
 
         emf = new MetadataSources(serviceRegistry)
-                .addAnnotatedClasses(Court.class, Booking.class)
+                .addAnnotatedClasses(Court.class, Booking.class, Player.class)
                 .buildMetadata()
                 .buildSessionFactory();
     }

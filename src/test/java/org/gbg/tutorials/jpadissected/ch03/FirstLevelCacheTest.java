@@ -13,10 +13,6 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * First Level Cache uses equals and hash code hence ALL entities must have them implemented.
- * There is an opened discussion whether to use surrogate keys or all fields.
- */
 @ExtendWith(EntityManagerInjector.class)
 public class FirstLevelCacheTest {
 
@@ -70,38 +66,12 @@ public class FirstLevelCacheTest {
             var allCourts = em.createQuery("select c from Court c", Court.class).getResultList();
             assertThat(allCourts).isNotEmpty();
 
-            // em.clear();  //  without em clear we do not reach out to db
+            em.clear();  //  without em clear we do not reach out to db
 
             var court = em.find(Court.class, id);
             assertThat(court).isNotNull();
         }
     }
 
-    @Test
-    public void shouldDemonstrateFindReference(EntityManagerFactory emf) {
-        //  given
-        UUID courtId = UUID.randomUUID();
-        UUID playerId = UUID.randomUUID();
 
-        try (var em = emf.createEntityManager()) {
-            var tx = em.getTransaction();
-            tx.begin();
-            var court = new Court(courtId, "court-name");
-            em.persist(court);
-            tx.commit();
-        }
-
-        //  when
-        try (var em = emf.createEntityManager()) {
-            var tx = em.getTransaction();
-
-            tx.begin();
-            var court = em.getReference(Court.class, courtId);
-            var player = em.getReference(Player.class, playerId);
-            var booking = new Booking(UUID.randomUUID(), LocalDateTime.now(), court, player);
-            em.persist(booking);
-
-            tx.commit();
-        }
-    }
 }
